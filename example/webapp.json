@@ -1,0 +1,32 @@
+{
+    'name': 'Example Webapp',
+    'version': '0.0.0',
+    'company': 'AWAF',
+    'authors': [
+        {
+            'name': 'Ángel González',
+            'email': 'aglezabad@gmail.com',
+            'linkedin': '',
+            'github': '',
+            'bitbucket': ''
+        }
+    ],
+    'description': 'An example web application.',
+    'keywords': [
+        'example'
+    ],
+    'license': 'GPLv2',
+    'homepage': '',
+    'modules': {
+        //ref: Base URL of application. Leave blank if it's localServer.
+        'ref': '',
+        'styles': [
+            
+        ],
+        'scripts': [
+            
+        ]
+    },
+    //run: When all modules are loaded, the framework calls the written function.
+    'run': ''
+}
