@@ -1,7 +1,7 @@
 /*jshint enforceall: true*/
 /*jslint browser: true, devel: true*/
 /*exported loader*/
-/*globals ajax, eventManager, async*/
+/*globals ajax, eventManager, async, LZString*/
 
 function Loader() {
     'use strict';
@@ -20,7 +20,9 @@ function Loader() {
             }
             break;
         case 'html':
-            // TODO
+            if (document.querySelector('div#' + LZString.compressToUTF16(url)) !== null) {
+                return true;
+            }
             break;
         }
         return false;
