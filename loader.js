@@ -5,7 +5,10 @@
 
 function Loader() {
     'use strict';
-    var self = this;
+    var self = this,
+        supportsHTML5Imports = function () {
+            return document.createElement('link')['import'] !== null;
+        };
     this.isLoaded = function (url) {
         var urlFragmented = url.split('.');
         switch (urlFragmented[urlFragmented.length - 1]) {
@@ -35,6 +38,9 @@ function Loader() {
             eventManager.on(element, 'loaded', function () {
                 callback(0);
             });
+            eventManager.on(element, 'error', function () {
+                callback(-2);
+            });
             document.body.appendChild(element);
         } else {
             callback(-1);
@@ -49,27 +55,49 @@ function Loader() {
             eventManager.on(element, 'loaded', function () {
                 callback(0);
             });
+            eventManager.on(element, 'error', function () {
+                callback(-2);
+            });
         } else {
             callback(-1);
         }
     };
     this.loadFragment = function (url, callback) {
-        var content = document.querySelector('div#content');
-        if (content === null) {
-            throw new Error("Missing content div in html page.");
-        } else {
-            ajax.request({
-                method: 'Get',
-                url: url,
-                success: function (response) {
-                    var fragment = document.createDocumentFragment();
-                    fragment.appendChild(response);
-                    content.appendChild(fragment);
-                },
-                error: function (errorCode) {
-                    throw new Error("Error in loading file: " + url);
+        if (!self.isLoaded(url)) {
+            var content = document.querySelector('div#content'),
+                element;
+            if (content === null) {
+                throw new Error("Missing content div in html page.");
+            } else {
+                if (supportsHTML5Imports()) {
+                    element = document.createElement('link');
+                    element.setAttribute('rel', 'import');
+                    element.setAttribute('href', url);
+                    eventManager.on(element, 'loaded', function () {
+                        content = element['import'];
+                        content.setAttribute('id', LZString.compressToUTF16(url));
+                    });
+                    eventManager.on(element, 'error', function () {
+                        callback(-2);
+                    });
+                } else {
+                    ajax.request({
+                        method: 'Get',
+                        url: url,
+                        success: function (response) {
+                            var fragment = document.createDocumentFragment();
+                            fragment.appendChild(response);
+                            content.appendChild(fragment);
+                            content.setAttribute('id', LZString.compressToUTF16(url));
+                        },
+                        error: function (errorCode) {
+                            callback(-2);
+                        }
+                    });
                 }
-            });
+            }
+        } else {
+            callback(-1);
         }
     };
     this.loadApp = function (metadata) {
