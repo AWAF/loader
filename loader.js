@@ -54,7 +54,23 @@ function Loader() {
         }
     };
     this.loadFragment = function (url, callback) {
-        
+        var content = document.querySelector('div#content');
+        if (content === null) {
+            throw new Error("Missing content div in html page.");
+        } else {
+            ajax.request({
+                method: 'Get',
+                url: url,
+                success: function (response) {
+                    var fragment = document.createDocumentFragment();
+                    fragment.appendChild(response);
+                    content.appendChild(fragment);
+                },
+                error: function (errorCode) {
+                    throw new Error("Error in loading file: " + url);
+                }
+            });
+        }
     };
     this.loadApp = function (metadata) {
         
