@@ -58,6 +58,7 @@ function Loader() {
             eventManager.on(element, 'error', function () {
                 callback(-2);
             });
+            document.head.appendChild(element);
         } else {
             callback(-1);
         }
@@ -80,6 +81,7 @@ function Loader() {
                     eventManager.on(element, 'error', function () {
                         callback(-2);
                     });
+                    document.head.appendChild(element);
                 } else {
                     ajax.request({
                         method: 'Get',
@@ -100,7 +102,44 @@ function Loader() {
             callback(-1);
         }
     };
-    this.loadApp = function (metadata) {
+    this.loadApp = function (metaUrl, callback) {
+
+    };
+    this.unloadScript = function (url, callback) {
+        var element;
+        if (self.isLoaded(url)) {
+            element = document.querySelector('script[src=' + url + ']');
+            element.parentNode.removeChild(element);
+            callback(0);
+        } else {
+            callback(-1);
+        }
+    };
+    this.unloadStyle = function (url, callback) {
+        var element;
+        if (self.isLoaded(url)) {
+            element = document.querySelector('link[href=' + url + ']');
+            element.parentNode.removeChild(element);
+            callback(0);
+        } else {
+            callback(-1);
+        }
+
+    };
+    this.unloadFragment = function (url, callback) {
+        var element;
+        if (self.isLoaded(url)) {
+            if (supportsHTML5Imports()) {
+                element = document.querySelector('link[href=' + url + ']');
+                element.parentNode.removeChild(element);
+                callback(0);
+            } else {
+                element = document.querySelector('div#' + LZString.compressToUTF16(url));
+                // TODO
+            }
+        } else {
+            callback(-1);
+        }
         
     };
     
