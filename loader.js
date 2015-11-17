@@ -25,7 +25,8 @@ function Loader() {
     var self = this;
     /**
      * Check if a browser interpreter has supported HTML5 imports.
-     * @member supportsHTML5Imports
+     * @memberof! Loader~
+     * @alias supportsHTML5Imports
      * @access private
      * @since 0.0.1
      * @returns {Boolean} Return true if browser supports HTML5 imports. Return false if not.
@@ -35,7 +36,8 @@ function Loader() {
     }
     /**
      * Checks if a script/stylesheet/fragment is already loaded.
-     * @member isLoaded
+     * @memberof! Loader#
+     * @alias isLoaded
      * @access public
      * @since 0.0.1
      * @param   {String}  url URL of file.
@@ -64,7 +66,8 @@ function Loader() {
     };
     /**
      * Loads a JavaScript file.
-     * @member loadScript
+     * @memberof! Loader#
+     * @alias loadScript
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL of file.
@@ -91,7 +94,8 @@ function Loader() {
     };
     /**
      * Loads a stylesheet file. At this moment, only CSS files.
-     * @member loadStyle
+     * @memberof! Loader#
+     * @alias loadStyle
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL of file.
@@ -119,7 +123,8 @@ function Loader() {
     };
     /**
      * Loads a HTML fragment.
-     * @member loadFragment
+     * @memberof! Loader#
+     * @alias loadFragment
      * @access public
      * @since 0.0.1
      * @throws {Error} If a div with 'content' id does not exist, an error is thrown.
@@ -177,7 +182,8 @@ function Loader() {
     };
     /**
      * Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.
-     * @member loadApp
+     * @memberof! Loader#
+     * @alias loadApp
      * @access public
      * @since 0.0.1
      * @param {String}   metaUrl  URL to metadata file.
@@ -205,7 +211,8 @@ function Loader() {
     };
     /**
      * Unloads a JavaScript file.
-     * @member unloadScript
+     * @memberof! Loader#
+     * @alias unloadScript
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL to file (reference, network not used).
@@ -225,7 +232,8 @@ function Loader() {
     };
     /**
      * Unloads a stylesheet file.
-     * @member unloadStyle
+     * @memberof! Loader#
+     * @alias unloadStyle
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL to file (reference).
@@ -246,7 +254,8 @@ function Loader() {
     };
     /**
      * Unloads a fragment file.
-     * @member unloadFragment
+     * @memberof! Loader#
+     * @alias unloadFragment
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL to file (reference).

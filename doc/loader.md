@@ -1,46 +1,24 @@
-## Classes
-<dl>
-<dt><a href="#Loader">Loader</a></dt>
-<dd><p>Class that loads and unloads dependencies in an application.</p>
-</dd>
-</dl>
-## Members
-<dl>
-<dt><a href="#isLoaded">isLoaded</a> ⇒ <code>Boolean</code></dt>
-<dd><p>Checks if a script/stylesheet/fragment is already loaded.</p>
-</dd>
-<dt><a href="#loadScript">loadScript</a></dt>
-<dd><p>Loads a JavaScript file.</p>
-</dd>
-<dt><a href="#loadStyle">loadStyle</a></dt>
-<dd><p>Loads a stylesheet file. At this moment, only CSS files.</p>
-</dd>
-<dt><a href="#loadFragment">loadFragment</a></dt>
-<dd><p>Loads a HTML fragment.</p>
-</dd>
-<dt><a href="#loadApp">loadApp</a></dt>
-<dd><p>Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.</p>
-</dd>
-<dt><a href="#unloadScript">unloadScript</a></dt>
-<dd><p>Unloads a JavaScript file.</p>
-</dd>
-<dt><a href="#unloadStyle">unloadStyle</a></dt>
-<dd><p>Unloads a stylesheet file.</p>
-</dd>
-<dt><a href="#unloadFragment">unloadFragment</a></dt>
-<dd><p>Unloads a fragment file.</p>
-</dd>
-</dl>
 <a name="Loader"></a>
 ## Loader
 Class that loads and unloads dependencies in an application.
 
 **Kind**: global class  
-<a name="isLoaded"></a>
-## isLoaded ⇒ <code>Boolean</code>
+
+* [Loader](#Loader)
+  * [.isLoaded(url)](#Loader+isLoaded) ⇒ <code>Boolean</code>
+  * [.loadScript(url, callback)](#Loader+loadScript)
+  * [.loadStyle(url, callback)](#Loader+loadStyle)
+  * [.loadFragment(url, callback)](#Loader+loadFragment)
+  * [.loadApp(metaUrl, callback)](#Loader+loadApp)
+  * [.unloadScript(url, callback)](#Loader+unloadScript)
+  * [.unloadStyle(url, callback)](#Loader+unloadStyle)
+  * [.unloadFragment(url, callback)](#Loader+unloadFragment)
+
+<a name="Loader+isLoaded"></a>
+### loader.isLoaded(url) ⇒ <code>Boolean</code>
 Checks if a script/stylesheet/fragment is already loaded.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Returns**: <code>Boolean</code> - Return true if file is loaded. False if not.  
 **Access:** public  
 **Since**: 0.0.1  
@@ -49,11 +27,11 @@ Checks if a script/stylesheet/fragment is already loaded.
 | --- | --- | --- |
 | url | <code>String</code> | URL of file. |
 
-<a name="loadScript"></a>
-## loadScript
+<a name="Loader+loadScript"></a>
+### loader.loadScript(url, callback)
 Loads a JavaScript file.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Access:** public  
 **Since**: 0.0.1  
 
@@ -62,11 +40,11 @@ Loads a JavaScript file.
 | url | <code>String</code> | URL of file. |
 | callback | <code>function</code> | Callback function that sends a return value.                            0: Script loaded.                            -1: Script already loaded.                            -2: Generic error. Script not loaded. |
 
-<a name="loadStyle"></a>
-## loadStyle
+<a name="Loader+loadStyle"></a>
+### loader.loadStyle(url, callback)
 Loads a stylesheet file. At this moment, only CSS files.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Access:** public  
 **Since**: 0.0.1  
 
@@ -75,11 +53,11 @@ Loads a stylesheet file. At this moment, only CSS files.
 | url | <code>String</code> | URL of file. |
 | callback | <code>function</code> | Callback function that sends a return value.                            0: Stylesheet loaded.                            -1: Stylesheet already loaded.                            -2: Generic error. Stylesheet not loaded. |
 
-<a name="loadFragment"></a>
-## loadFragment
+<a name="Loader+loadFragment"></a>
+### loader.loadFragment(url, callback)
 Loads a HTML fragment.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Throws**:
 
 - <code>Error</code> If a div with 'content' id does not exist, an error is thrown.
@@ -92,11 +70,11 @@ Loads a HTML fragment.
 | url | <code>String</code> | URL to file. |
 | callback | <code>function</code> | Callback function that sends a return value.                            0: Fragment loaded.                            -1: Fragment already loaded.                            -2: Generic error. Fragment not loaded.                            -4xx: HTTP 4xx error code.                            -5xx: HTTP 5xx error code. |
 
-<a name="loadApp"></a>
-## loadApp
+<a name="Loader+loadApp"></a>
+### loader.loadApp(metaUrl, callback)
 Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Access:** public  
 **Since**: 0.0.1  
 
@@ -105,11 +83,11 @@ Loads a JSON metadata file and loads all scripts/stylesheets/fragments written i
 | metaUrl | <code>String</code> | URL to metadata file. |
 | callback | <code>function</code> | Callback function that sends a return value.                            0: App loaded and executed. |
 
-<a name="unloadScript"></a>
-## unloadScript
+<a name="Loader+unloadScript"></a>
+### loader.unloadScript(url, callback)
 Unloads a JavaScript file.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Access:** public  
 **Since**: 0.0.1  
 
@@ -118,11 +96,11 @@ Unloads a JavaScript file.
 | url | <code>String</code> | URL to file (reference, network not used). |
 | callback | <code>function</code> | Callback function that returns a value.                            0: Script unloaded.                            -1: Script not loaded. |
 
-<a name="unloadStyle"></a>
-## unloadStyle
+<a name="Loader+unloadStyle"></a>
+### loader.unloadStyle(url, callback)
 Unloads a stylesheet file.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Access:** public  
 **Since**: 0.0.1  
 
@@ -131,11 +109,11 @@ Unloads a stylesheet file.
 | url | <code>String</code> | URL to file (reference). |
 | callback | <code>function</code> | Callback function that returns a value.                            0: Style unloaded.                            -1: Style not loaded. |
 
-<a name="unloadFragment"></a>
-## unloadFragment
+<a name="Loader+unloadFragment"></a>
+### loader.unloadFragment(url, callback)
 Unloads a fragment file.
 
-**Kind**: global variable  
+**Kind**: instance method of <code>[Loader](#Loader)</code>  
 **Access:** public  
 **Since**: 0.0.1  
 
