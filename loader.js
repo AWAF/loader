@@ -3,12 +3,36 @@
 /*exported loader*/
 /*globals ajax, eventManager, async, LZString*/
 
+/**
+ * Object Loader
+ * @constructor
+ * @requires AWAF ajax module.
+ * @requires AWAF eventManager module.
+ * @requires Caolan Async module.
+ * @requires Pieroxy LZString module.
+ */
 function Loader() {
     'use strict';
-    var self = this,
-        supportsHTML5Imports = function () {
-            return document.createElement('link')['import'] !== null;
-        };
+    /**
+     * @access private
+     */
+    var self = this;
+    /**
+     * Check if a browser interpreter has supported HTML5 imports.
+     * Loader~supportsHTML5Imports
+     * @access private
+     * @returns {Boolean} Return true if browser supports HTML5 imports. Return false if not.
+     */
+    function supportsHTML5Imports() {
+        return document.createElement('link')['import'] !== null;
+    }
+    /**
+     * Checks if a script/stylesheet/fragment is already loaded.
+     * Loader#isLoaded
+     * @access public
+     * @param   {String}  url URL of file.
+     * @returns {Boolean} Return true if file is loaded. False if not.
+     */
     this.isLoaded = function (url) {
         var urlFragmented = url.split('.');
         switch (urlFragmented[urlFragmented.length - 1]) {
@@ -30,6 +54,16 @@ function Loader() {
         }
         return false;
     };
+    /**
+     * Loads a JavaScript file.
+     * Loader#loadScript
+     * @access public
+     * @param {String}   url      URL of file.
+     * @param {Function} callback Callback function that sends a return value.
+     *                            0: Script loaded.
+     *                            -1: Script already loaded.
+     *                            -2: Generic error. Script not loaded.
+     */
     this.loadScript = function (url, callback) {
         if (!self.isLoaded(url)) {
             var element = document.createElement('script');
@@ -46,6 +80,16 @@ function Loader() {
             callback(-1);
         }
     };
+    /**
+     * Loads a stylesheet file. At this moment, only CSS files.
+     * Loader#loadStyle
+     * @access public
+     * @param {String}   url      URL of file.
+     * @param {Function} callback Callback function that sends a return value.
+     *                            0: Stylesheet loaded.
+     *                            -1: Stylesheet already loaded.
+     *                            -2: Generic error. Stylesheet not loaded.
+     */
     this.loadStyle = function (url, callback) {
         if (!self.isLoaded(url)) {
             var element = document.createElement('link');
@@ -63,6 +107,19 @@ function Loader() {
             callback(-1);
         }
     };
+    /**
+     * Loads a HTML fragment.
+     * Loader#loadFragment
+     * @access public
+     * @throws {Error} If a div with 'content' id does not exist, an error is thrown.
+     * @param {String}   url      URL to file.
+     * @param {Function} callback Callback function that sends a return value.
+     *                            0: Fragment loaded.
+     *                            -1: Fragment already loaded.
+     *                            -2: Generic error. Fragment not loaded.
+     *                            -4xx: HTTP 4xx error code.
+     *                            -5xx: HTTP 5xx error code.
+     */
     this.loadFragment = function (url, callback) {
         if (!self.isLoaded(url)) {
             var content = document.querySelector('div#content'),
@@ -93,7 +150,11 @@ function Loader() {
                             content.setAttribute('id', LZString.compressToUTF16(url));
                         },
                         error: function (errorCode) {
-                            callback(-2);
+                            if (errorCode >= 400 && errorCode < 600) {
+                                callback(-errorCode);
+                            } else {
+                                callback(-2);
+                            }
                         }
                     });
                 }
@@ -103,9 +164,42 @@ function Loader() {
             callback(-1);
         }
     };
+    /**
+     * Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.
+     * Loader#loadApp
+     * @access public
+     * @param {String}   metaUrl  URL to metadata file.
+     * @param {Function} callback Callback function that sends a return value.
+     *                            0: App loaded and executed.
+     */
     this.loadApp = function (metaUrl, callback) {
-
+        //Downloads JSON metafile.
+        ajax.request({
+            method: 'Get',
+            url: metaUrl,
+            success: function (response) {
+                //Parses file to JavaScript object.
+                //Loads each dependency.
+                //Loads main function indicated.
+            },
+            error: function (errorCode) {
+                if (errorCode >= 400 && errorCode < 600) {
+                    callback(-errorCode);
+                } else {
+                    callback(-2);
+                }
+            }
+        });
     };
+    /**
+     * Unloads a JavaScript file.
+     * Loader#unloadScript
+     * @access public
+     * @param {String}   url      URL to file (reference, network not used).
+     * @param {Function} callback Callback function that returns a value.
+     *                            0: Script unloaded.
+     *                            -1: Script not loaded.
+     */
     this.unloadScript = function (url, callback) {
         var element;
         if (self.isLoaded(url)) {
@@ -116,6 +210,15 @@ function Loader() {
             callback(-1);
         }
     };
+    /**
+     * Unloads a stylesheet file.
+     * Loader#unloadStyle
+     * @access public
+     * @param {String}   url      URL to file (reference).
+     * @param {Function} callback Callback function that returns a value.
+     *                            0: Style unloaded.
+     *                            -1: Style not loaded.
+     */
     this.unloadStyle = function (url, callback) {
         var element;
         if (self.isLoaded(url)) {
@@ -127,6 +230,15 @@ function Loader() {
         }
 
     };
+    /**
+     * Unloads a fragment file.
+     * Loader#unloadFragment
+     * @access public
+     * @param {String}   url      URL to file (reference).
+     * @param {Function} callback Callback function that returns a value.
+     *                            0: Fragment unloaded.
+     *                            -1: Fragment not loaded.
+     */
     this.unloadFragment = function (url, callback) {
         var element,
             clonedElement;
