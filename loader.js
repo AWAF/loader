@@ -25,7 +25,7 @@ function Loader() {
     var self = this;
     /**
      * Check if a browser interpreter has supported HTML5 imports.
-     * @function supportsHTML5Imports
+     * @member supportsHTML5Imports
      * @access private
      * @since 0.0.1
      * @returns {Boolean} Return true if browser supports HTML5 imports. Return false if not.
@@ -35,7 +35,7 @@ function Loader() {
     }
     /**
      * Checks if a script/stylesheet/fragment is already loaded.
-     * @function isLoaded
+     * @member isLoaded
      * @access public
      * @since 0.0.1
      * @param   {String}  url URL of file.
@@ -64,7 +64,7 @@ function Loader() {
     };
     /**
      * Loads a JavaScript file.
-     * @function loadScript
+     * @member loadScript
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL of file.
@@ -91,7 +91,7 @@ function Loader() {
     };
     /**
      * Loads a stylesheet file. At this moment, only CSS files.
-     * @function loadStyle
+     * @member loadStyle
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL of file.
@@ -119,7 +119,7 @@ function Loader() {
     };
     /**
      * Loads a HTML fragment.
-     * @function loadFragment
+     * @member loadFragment
      * @access public
      * @since 0.0.1
      * @throws {Error} If a div with 'content' id does not exist, an error is thrown.
@@ -177,7 +177,7 @@ function Loader() {
     };
     /**
      * Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.
-     * @function loadApp
+     * @member loadApp
      * @access public
      * @since 0.0.1
      * @param {String}   metaUrl  URL to metadata file.
@@ -205,7 +205,7 @@ function Loader() {
     };
     /**
      * Unloads a JavaScript file.
-     * @function unloadScript
+     * @member unloadScript
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL to file (reference, network not used).
@@ -225,7 +225,7 @@ function Loader() {
     };
     /**
      * Unloads a stylesheet file.
-     * @function unloadStyle
+     * @member unloadStyle
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL to file (reference).
@@ -246,7 +246,7 @@ function Loader() {
     };
     /**
      * Unloads a fragment file.
-     * @function unloadFragment
+     * @member unloadFragment
      * @access public
      * @since 0.0.1
      * @param {String}   url      URL to file (reference).
