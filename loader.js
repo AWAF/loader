@@ -87,9 +87,9 @@ function Loader() {
                         method: 'Get',
                         url: url,
                         success: function (response) {
-                            var fragment = document.createDocumentFragment();
-                            fragment.appendChild(response);
-                            content.appendChild(fragment);
+                            element = document.createDocumentFragment();
+                            element.appendChild(response);
+                            content.appendChild(element);
                             content.setAttribute('id', LZString.compressToUTF16(url));
                         },
                         error: function (errorCode) {
@@ -97,6 +97,7 @@ function Loader() {
                         }
                     });
                 }
+                callback(0);
             }
         } else {
             callback(-1);
@@ -127,16 +128,18 @@ function Loader() {
 
     };
     this.unloadFragment = function (url, callback) {
-        var element;
+        var element,
+            clonedElement;
         if (self.isLoaded(url)) {
             if (supportsHTML5Imports()) {
                 element = document.querySelector('link[href=' + url + ']');
                 element.parentNode.removeChild(element);
-                callback(0);
-            } else {
-                element = document.querySelector('div#' + LZString.compressToUTF16(url));
-                // TODO
             }
+            element = document.querySelector('div#' + LZString.compressToUTF16(url));
+            clonedElement = element.cloneNode(false);
+            element.parentNode.replaceChild(clonedElement, element);
+            element.setAttribute('id', 'content');
+            callback(0);
         } else {
             callback(-1);
         }
@@ -144,4 +147,6 @@ function Loader() {
     };
     
 }
+
+var loader = new Loader();
 
