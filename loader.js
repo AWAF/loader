@@ -4,12 +4,18 @@
 /*globals ajax, eventManager, async, LZString*/
 
 /**
- * Object Loader
- * @constructor
- * @requires AWAF ajax module.
- * @requires AWAF eventManager module.
- * @requires Caolan Async module.
- * @requires Pieroxy LZString module.
+ * @file
+ * @author Ángel González <aglezabad@gmail.com>
+ * @version 0.0.1
+ */
+
+/**
+ * @class
+ * @classdesc Class that loads and unloads dependencies in an application.
+ * @requires AWAF/ajax
+ * @requires AWAF/eventmanager
+ * @requires caolan/async
+ * @requires pieroxy/lz-string
  */
 function Loader() {
     'use strict';
@@ -19,8 +25,9 @@ function Loader() {
     var self = this;
     /**
      * Check if a browser interpreter has supported HTML5 imports.
-     * Loader~supportsHTML5Imports
+     * @function supportsHTML5Imports
      * @access private
+     * @since 0.0.1
      * @returns {Boolean} Return true if browser supports HTML5 imports. Return false if not.
      */
     function supportsHTML5Imports() {
@@ -28,8 +35,9 @@ function Loader() {
     }
     /**
      * Checks if a script/stylesheet/fragment is already loaded.
-     * Loader#isLoaded
+     * @function isLoaded
      * @access public
+     * @since 0.0.1
      * @param   {String}  url URL of file.
      * @returns {Boolean} Return true if file is loaded. False if not.
      */
@@ -56,8 +64,9 @@ function Loader() {
     };
     /**
      * Loads a JavaScript file.
-     * Loader#loadScript
+     * @function loadScript
      * @access public
+     * @since 0.0.1
      * @param {String}   url      URL of file.
      * @param {Function} callback Callback function that sends a return value.
      *                            0: Script loaded.
@@ -82,8 +91,9 @@ function Loader() {
     };
     /**
      * Loads a stylesheet file. At this moment, only CSS files.
-     * Loader#loadStyle
+     * @function loadStyle
      * @access public
+     * @since 0.0.1
      * @param {String}   url      URL of file.
      * @param {Function} callback Callback function that sends a return value.
      *                            0: Stylesheet loaded.
@@ -109,8 +119,9 @@ function Loader() {
     };
     /**
      * Loads a HTML fragment.
-     * Loader#loadFragment
+     * @function loadFragment
      * @access public
+     * @since 0.0.1
      * @throws {Error} If a div with 'content' id does not exist, an error is thrown.
      * @param {String}   url      URL to file.
      * @param {Function} callback Callback function that sends a return value.
@@ -166,8 +177,9 @@ function Loader() {
     };
     /**
      * Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.
-     * Loader#loadApp
+     * @function loadApp
      * @access public
+     * @since 0.0.1
      * @param {String}   metaUrl  URL to metadata file.
      * @param {Function} callback Callback function that sends a return value.
      *                            0: App loaded and executed.
@@ -193,8 +205,9 @@ function Loader() {
     };
     /**
      * Unloads a JavaScript file.
-     * Loader#unloadScript
+     * @function unloadScript
      * @access public
+     * @since 0.0.1
      * @param {String}   url      URL to file (reference, network not used).
      * @param {Function} callback Callback function that returns a value.
      *                            0: Script unloaded.
@@ -212,8 +225,9 @@ function Loader() {
     };
     /**
      * Unloads a stylesheet file.
-     * Loader#unloadStyle
+     * @function unloadStyle
      * @access public
+     * @since 0.0.1
      * @param {String}   url      URL to file (reference).
      * @param {Function} callback Callback function that returns a value.
      *                            0: Style unloaded.
@@ -232,8 +246,9 @@ function Loader() {
     };
     /**
      * Unloads a fragment file.
-     * Loader#unloadFragment
+     * @function unloadFragment
      * @access public
+     * @since 0.0.1
      * @param {String}   url      URL to file (reference).
      * @param {Function} callback Callback function that returns a value.
      *                            0: Fragment unloaded.
