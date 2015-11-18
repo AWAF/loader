@@ -82,14 +82,14 @@ function Loader() {
             element.setAttribute('type', 'text/javascript');
             element.setAttribute('src', url);
             eventManager.on(element, 'loaded', function () {
-                callback(0);
+                return callback(0);
             });
             eventManager.on(element, 'error', function () {
-                callback(-2);
+                return callback(-2);
             });
             document.body.appendChild(element);
         } else {
-            callback(-1);
+            return callback(-1);
         }
     };
     /**
@@ -111,14 +111,14 @@ function Loader() {
             element.setAttribute('rel', 'stylesheet');
             element.setAttribute('href', url);
             eventManager.on(element, 'loaded', function () {
-                callback(0);
+                return callback(0);
             });
             eventManager.on(element, 'error', function () {
-                callback(-2);
+                return callback(-2);
             });
             document.head.appendChild(element);
         } else {
-            callback(-1);
+            return callback(-1);
         }
     };
     /**
@@ -152,7 +152,7 @@ function Loader() {
                         content.setAttribute('id', LZString.compressToUTF16(url));
                     });
                     eventManager.on(element, 'error', function () {
-                        callback(-2);
+                        return callback(-2);
                     });
                     document.head.appendChild(element);
                 } else {
@@ -167,19 +167,48 @@ function Loader() {
                         },
                         error: function (errorCode) {
                             if (errorCode >= 400 && errorCode < 600) {
-                                callback(-errorCode);
+                                return callback(-errorCode);
                             } else {
-                                callback(-2);
+                                return callback(-2);
                             }
                         }
                     });
                 }
-                callback(0);
+                return callback(0);
             }
         } else {
-            callback(-1);
+            return callback(-1);
         }
     };
+    //TODO
+    function loadAppDependencies(metaData, callback) {
+        async.each(metaData.modules.styles, function (file, callback) {
+            self.loadStyle(metaData.modules.ref + file, function (status) {
+                if (status < -1) {
+                    return callback('Load error: ' + file);
+                } else {
+                    return callback();
+                }
+            });
+        }, function (err) {
+            if (err) {
+                throw new Error('Load application error. Error produced: ' + err);
+            }
+        });
+        async.each(metaData.modules.scripts, function (file, callback) {
+            self.loadScript(metaData.modules.ref + file, function (status) {
+                if (status < -1) {
+                    return callback('Load error: ' + file);
+                } else {
+                    return callback();
+                }
+            });
+        }, function (err) {
+            if (err) {
+                throw new Error('Load application error. Error produced: ' + err);
+            }
+        });
+    }
     /**
      * Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.
      * @memberof! Loader#
@@ -191,20 +220,19 @@ function Loader() {
      *                            0: App loaded and executed.
      */
     this.loadApp = function (metaUrl, callback) {
-        //Downloads JSON metafile.
         ajax.request({
             method: 'Get',
             url: metaUrl,
             success: function (response) {
-                //Parses file to JavaScript object.
-                //Loads each dependency.
-                //Loads main function indicated.
+                loadAppDependencies(JSON.parse(response.responseText), function (status) {
+                   //TODO
+                });
             },
             error: function (errorCode) {
                 if (errorCode >= 400 && errorCode < 600) {
-                    callback(-errorCode);
+                    return callback(-errorCode);
                 } else {
-                    callback(-2);
+                    return callback(-2);
                 }
             }
         });
@@ -225,9 +253,9 @@ function Loader() {
         if (self.isLoaded(url)) {
             element = document.querySelector('script[src=' + url + ']');
             element.parentNode.removeChild(element);
-            callback(0);
+            return callback(0);
         } else {
-            callback(-1);
+            return callback(-1);
         }
     };
     /**
@@ -246,9 +274,9 @@ function Loader() {
         if (self.isLoaded(url)) {
             element = document.querySelector('link[href=' + url + ']');
             element.parentNode.removeChild(element);
-            callback(0);
+            return callback(0);
         } else {
-            callback(-1);
+            return callback(-1);
         }
 
     };
@@ -275,9 +303,9 @@ function Loader() {
             clonedElement = element.cloneNode(false);
             element.parentNode.replaceChild(clonedElement, element);
             element.setAttribute('id', 'content');
-            callback(0);
+            return callback(0);
         } else {
-            callback(-1);
+            return callback(-1);
         }
         
     };
