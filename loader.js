@@ -1,5 +1,4 @@
-/*jshint enforceall: true*/
-/*jslint browser: true, devel: true*/
+/*jshint esnext: true, enforceall: true, browser: true*/
 /*exported loader*/
 /*globals ajax, eventManager, async, LZString*/
 
@@ -17,110 +16,93 @@
  * @requires caolan/async
  * @requires pieroxy/lz-string
  */
-function Loader() {
-    'use strict';
-    /**
-     * @access private
-     */
-    var self = this;
+class Loader{
+    constructor(){
+        const LOAD_OK = 0;
+        const LOAD_ERROR = 1;
+        const URL_NOT_DEFINED = 10;
+        const FILE_LOADED = 11;
+        const MISSING_CONTENT_DIV = 20;
+    }
     /**
      * Check if a browser interpreter has supported HTML5 imports.
-     * @memberof! Loader~
-     * @alias supportsHTML5Imports
-     * @access private
      * @since 0.0.1
-     * @returns {Boolean} Return true if browser supports HTML5 imports. Return false if not.
+     * @returns {boolean} True -> Browser accepts HTML5 imports. False -> Browser can't use imports.
      */
-    function supportsHTML5Imports() {
+    static supportsHTML5Imports(){
         return document.createElement('link')['import'] !== null;
     }
     /**
-     * Checks if a script/stylesheet/fragment is already loaded.
-     * @memberof! Loader#
-     * @alias isLoaded
-     * @access public
+     * Checks if a web application file (js/css/html) is already loaded.
      * @since 0.0.1
-     * @param   {String}  url URL of file.
-     * @returns {Boolean} Return true if file is loaded. False if not.
+     * @param   {string}  url URL of file.
+     * @returns {boolean} True if file loaded. False if not.
      */
-    this.isLoaded = function (url) {
-        var urlFragmented = url.split('.');
+    isLoaded(url){
+        if (url === undefined) {
+            return false;
+        }
+        let urlFragmented = url.split('.');
         switch (urlFragmented[urlFragmented.length - 1]) {
-        case 'js':
-            if (document.querySelector('script[src="' + url + '"]') !== null) {
-                return true;
-            }
-            break;
-        case 'css':
-            if (document.querySelector('link[href="' + url + '"]') !== null) {
-                return true;
-            }
-            break;
-        case 'html':
-            if (document.querySelector('div#' + LZString.compressToUTF16(url)) !== null) {
-                return true;
-            }
-            break;
+            case 'js':
+                return document.querySelector('script[src="' + url + '"]') !== null;
+            case 'css':
+                return document.querySelector('link[href="' + url + '"]') !== null;
+            case 'html':
+                return document.querySelector('div#' + LZString.compressToUTF16(url)) !== null;
         }
         return false;
-    };
-    /**
-     * Loads a JavaScript file.
-     * @memberof! Loader#
-     * @alias loadScript
-     * @access public
-     * @since 0.0.1
-     * @param {String}   url      URL of file.
-     * @param {Function} callback Callback function that sends a return value.
-     *                            0: Script loaded.
-     *                            -1: Script already loaded.
-     *                            -2: Generic error. Script not loaded.
-     */
-    this.loadScript = function (url, callback) {
-        if (!self.isLoaded(url)) {
-            var element = document.createElement('script');
-            element.setAttribute('type', 'text/javascript');
-            element.setAttribute('src', url);
-            eventManager.on(element, 'loaded', function () {
-                return callback(0);
-            });
-            eventManager.on(element, 'error', function () {
-                return callback(-2);
-            });
-            document.body.appendChild(element);
-        } else {
-            return callback(-1);
+    }
+
+    load(url, callback){
+        if (url === undefined) {
+            return callback(this.URL_NOT_DEFINED);
         }
-    };
-    /**
-     * Loads a stylesheet file. At this moment, only CSS files.
-     * @memberof! Loader#
-     * @alias loadStyle
-     * @access public
-     * @since 0.0.1
-     * @param {String}   url      URL of file.
-     * @param {Function} callback Callback function that sends a return value.
-     *                            0: Stylesheet loaded.
-     *                            -1: Stylesheet already loaded.
-     *                            -2: Generic error. Stylesheet not loaded.
-     */
-    this.loadStyle = function (url, callback) {
-        if (!self.isLoaded(url)) {
-            var element = document.createElement('link');
-            element.setAttribute('type', 'text/css');
-            element.setAttribute('rel', 'stylesheet');
-            element.setAttribute('href', url);
-            eventManager.on(element, 'loaded', function () {
-                return callback(0);
-            });
-            eventManager.on(element, 'error', function () {
-                return callback(-2);
-            });
-            document.head.appendChild(element);
-        } else {
-            return callback(-1);
+        if(this.isLoaded(url)){
+           return callback(this.FILE_LOADED);
         }
-    };
+        let urlFragmented = url.split('.'),
+            element;
+        switch (urlFragmented[urlFragmented.length - 1]) {
+            case 'js':
+                element = document.createElement('script');
+                element.setAttribute('type', 'text/javascript');
+                element.setAttribute('src', url);
+                element.addEventListener('load', function () {
+                    return callback(this.LOAD_OK);
+                });
+                element.addEventListener('error', function () {
+                    return callback(this.LOAD_ERROR);
+                });
+                document.body.appendChild(element);
+                break;
+            case 'css':
+                element = document.createElement('link');
+                element.setAttribute('type', 'text/css');
+                element.setAttribute('rel', 'stylesheet');
+                element.setAttribute('href', url);
+                element.addEventListener('load', function () {
+                    return callback(this.LOAD_OK);
+                });
+                element.addEventListener('error', function () {
+                    return callback(this.LOAD_ERROR);
+                });
+                document.head.appendChild(element);
+                break;
+            case 'html':
+                let content = document.querySelector('div#content');
+                if (content === null) {
+                    return callback(this.MISSING_CONTENT_DIV);
+                }
+                if (Loader.supportsHTML5Imports()) {
+
+                } else {
+
+                }
+                break;
+        }
+    }
+}
     /**
      * Loads a HTML fragment.
      * @memberof! Loader#
