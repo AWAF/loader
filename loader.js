@@ -16,13 +16,15 @@
  * @requires caolan/async
  * @requires pieroxy/lz-string
  */
-class Loader{
+export class Loader{
     constructor(){
         const LOAD_OK = 0;
         const LOAD_ERROR = 1;
         const URL_NOT_DEFINED = 10;
         const FILE_LOADED = 11;
+        const FILE_NOT_LOADED = 12;
         const MISSING_CONTENT_DIV = 20;
+        const CANT_UNLOAD = 30;
     }
     /**
      * Check if a browser interpreter has supported HTML5 imports.
@@ -95,73 +97,52 @@ class Loader{
                     return callback(this.MISSING_CONTENT_DIV);
                 }
                 if (Loader.supportsHTML5Imports()) {
-
+                    element = document.createElement('link');
+                    element.setAttribute('rel','import');
+                    element.setAttribute('href',url);
+                    element.addEventListener('load', function () {
+                        content = element['import'];
+                        content.setAttribute('id',LZString.compressToUTF16(url));
+                        return callback(this.LOAD_OK);
+                    });
+                    element.addEventListener('error', function () {
+                        return callback(this.LOAD_ERROR);
+                    });
+                    document.head.appendChild(element);
                 } else {
-
+                    ajax.get(url, function (response) {
+                        element = document.createDocumentFragment();
+                        element.appendChild(response);
+                        content.appendChild(element);
+                        content.setAttribute('id', LZString.compressToUTF16(url));
+                        return callback(this.LOAD_OK);
+                    }, function (status) {
+                        return callback(status);
+                    });
                 }
                 break;
         }
     }
-}
-    /**
-     * Loads a HTML fragment.
-     * @memberof! Loader#
-     * @alias loadFragment
-     * @access public
-     * @since 0.0.1
-     * @throws {Error} If a div with 'content' id does not exist, an error is thrown.
-     * @param {String}   url      URL to file.
-     * @param {Function} callback Callback function that sends a return value.
-     *                            0: Fragment loaded.
-     *                            -1: Fragment already loaded.
-     *                            -2: Generic error. Fragment not loaded.
-     *                            -4xx: HTTP 4xx error code.
-     *                            -5xx: HTTP 5xx error code.
-     */
-    this.loadFragment = function (url, callback) {
-        if (!self.isLoaded(url)) {
-            var content = document.querySelector('div#content'),
-                element;
-            if (content === null) {
-                throw new Error("Missing content div in html page.");
-            } else {
-                if (supportsHTML5Imports()) {
-                    element = document.createElement('link');
-                    element.setAttribute('rel', 'import');
-                    element.setAttribute('href', url);
-                    eventManager.on(element, 'loaded', function () {
-                        content = element['import'];
-                        content.setAttribute('id', LZString.compressToUTF16(url));
-                    });
-                    eventManager.on(element, 'error', function () {
-                        return callback(-2);
-                    });
-                    document.head.appendChild(element);
-                } else {
-                    ajax.request({
-                        method: 'Get',
-                        url: url,
-                        success: function (response) {
-                            element = document.createDocumentFragment();
-                            element.appendChild(response);
-                            content.appendChild(element);
-                            content.setAttribute('id', LZString.compressToUTF16(url));
-                        },
-                        error: function (errorCode) {
-                            if (errorCode >= 400 && errorCode < 600) {
-                                return callback(-errorCode);
-                            } else {
-                                return callback(-2);
-                            }
-                        }
-                    });
-                }
-                return callback(0);
-            }
-        } else {
-            return callback(-1);
+
+    unload(url, callback){
+        if (url === undefined) {
+            return callback(this.URL_NOT_DEFINED);
         }
-    };
+        if (!this.isLoaded(url)) {
+            return callback(this.FILE_NOT_LOADED);
+        }
+        let urlFragmented = url.split('.');
+        switch(urlFragmented[urlFragmented.length - 1]) {
+            case 'js':
+                //Can't unload added Javascript files yet.
+                return callback(this.CANT_UNLOAD);
+            case 'css':
+                break;
+            case 'html':
+                break;
+        }
+    }
+}
     //TODO
     function loadAppDependencies(metaData, callback) {
         async.each(metaData.modules.styles, function (file, callback) {
@@ -220,27 +201,6 @@ class Loader{
         });
     };
     /**
-     * Unloads a JavaScript file.
-     * @memberof! Loader#
-     * @alias unloadScript
-     * @access public
-     * @since 0.0.1
-     * @param {String}   url      URL to file (reference, network not used).
-     * @param {Function} callback Callback function that returns a value.
-     *                            0: Script unloaded.
-     *                            -1: Script not loaded.
-     */
-    this.unloadScript = function (url, callback) {
-        var element;
-        if (self.isLoaded(url)) {
-            element = document.querySelector('script[src=' + url + ']');
-            element.parentNode.removeChild(element);
-            return callback(0);
-        } else {
-            return callback(-1);
-        }
-    };
-    /**
      * Unloads a stylesheet file.
      * @memberof! Loader#
      * @alias unloadStyle
@@ -294,5 +254,4 @@ class Loader{
     
 }
 
-var loader = new Loader();
 
