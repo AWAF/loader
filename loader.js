@@ -9,7 +9,7 @@
  */
 
 /**
- * @class
+ * @class Loader
  * @classdesc Class that loads and unloads dependencies in an application.
  * @requires AWAF/ajax
  * @requires AWAF/eventmanager
@@ -19,6 +19,7 @@
 export class Loader{
     constructor(){
         const LOAD_OK = 0;
+        const UNLOAD_OK = 0;
         const LOAD_ERROR = 1;
         const URL_NOT_DEFINED = 10;
         const FILE_LOADED = 11;
@@ -56,6 +57,11 @@ export class Loader{
         return false;
     }
 
+    /**
+     * Loads a file (JS/CSS/HTML).
+     * @param   {string}   url      URL of file.
+     * @param   {function} callback Function returned with a number value (status).
+     */
     load(url, callback){
         if (url === undefined) {
             return callback(this.URL_NOT_DEFINED);
@@ -124,7 +130,13 @@ export class Loader{
         }
     }
 
+    /**
+     * Unloads a file (CSS/HTML).
+     * @param   {string}   url      URL of file.
+     * @param   {function} callback Function returned with a status value.
+     */
     unload(url, callback){
+        let element, clonedElement;
         if (url === undefined) {
             return callback(this.URL_NOT_DEFINED);
         }
@@ -137,121 +149,24 @@ export class Loader{
                 //Can't unload added Javascript files yet.
                 return callback(this.CANT_UNLOAD);
             case 'css':
-                break;
-            case 'html':
-                break;
-        }
-    }
-}
-    //TODO
-    function loadAppDependencies(metaData, callback) {
-        async.each(metaData.modules.styles, function (file, callback) {
-            self.loadStyle(metaData.modules.ref + file, function (status) {
-                if (status < -1) {
-                    return callback('Load error: ' + file);
-                } else {
-                    return callback();
-                }
-            });
-        }, function (err) {
-            if (err) {
-                throw new Error('Load application error. Error produced: ' + err);
-            }
-        });
-        async.each(metaData.modules.scripts, function (file, callback) {
-            self.loadScript(metaData.modules.ref + file, function (status) {
-                if (status < -1) {
-                    return callback('Load error: ' + file);
-                } else {
-                    return callback();
-                }
-            });
-        }, function (err) {
-            if (err) {
-                throw new Error('Load application error. Error produced: ' + err);
-            }
-        });
-    }
-    /**
-     * Loads a JSON metadata file and loads all scripts/stylesheets/fragments written in it.
-     * @memberof! Loader#
-     * @alias loadApp
-     * @access public
-     * @since 0.0.1
-     * @param {String}   metaUrl  URL to metadata file.
-     * @param {Function} callback Callback function that sends a return value.
-     *                            0: App loaded and executed.
-     */
-    this.loadApp = function (metaUrl, callback) {
-        ajax.request({
-            method: 'Get',
-            url: metaUrl,
-            success: function (response) {
-                loadAppDependencies(JSON.parse(response.responseText), function (status) {
-                   //TODO
-                });
-            },
-            error: function (errorCode) {
-                if (errorCode >= 400 && errorCode < 600) {
-                    return callback(-errorCode);
-                } else {
-                    return callback(-2);
-                }
-            }
-        });
-    };
-    /**
-     * Unloads a stylesheet file.
-     * @memberof! Loader#
-     * @alias unloadStyle
-     * @access public
-     * @since 0.0.1
-     * @param {String}   url      URL to file (reference).
-     * @param {Function} callback Callback function that returns a value.
-     *                            0: Style unloaded.
-     *                            -1: Style not loaded.
-     */
-    this.unloadStyle = function (url, callback) {
-        var element;
-        if (self.isLoaded(url)) {
-            element = document.querySelector('link[href=' + url + ']');
-            element.parentNode.removeChild(element);
-            return callback(0);
-        } else {
-            return callback(-1);
-        }
-
-    };
-    /**
-     * Unloads a fragment file.
-     * @memberof! Loader#
-     * @alias unloadFragment
-     * @access public
-     * @since 0.0.1
-     * @param {String}   url      URL to file (reference).
-     * @param {Function} callback Callback function that returns a value.
-     *                            0: Fragment unloaded.
-     *                            -1: Fragment not loaded.
-     */
-    this.unloadFragment = function (url, callback) {
-        var element,
-            clonedElement;
-        if (self.isLoaded(url)) {
-            if (supportsHTML5Imports()) {
-                element = document.querySelector('link[href=' + url + ']');
+                element = document.querySelector('link[href="' + url + '"]');
                 element.parentNode.removeChild(element);
-            }
-            element = document.querySelector('div#' + LZString.compressToUTF16(url));
-            clonedElement = element.cloneNode(false);
-            element.parentNode.replaceChild(clonedElement, element);
-            element.setAttribute('id', 'content');
-            return callback(0);
-        } else {
-            return callback(-1);
+                return callback(this.UNLOAD_OK);
+            case 'html':
+                if (Loader.supportsHTML5Imports()) {
+                    element = document.querySelector('link[href=' + url + ']');
+                    element.parentNode.removeChild(element);
+                }
+                element = document.querySelector('div#' + LZString.compressToUTF16(url));
+                if (element === null) {
+                    return callback(this.MISSING_CONTENT_DIV);
+                }
+                clonedElement = element.cloneNode(false);
+                element.parentNode.replaceChild(clonedElement, element);
+                element.setAttribute('id', 'content');
+                return callback(this.UNLOAD_OK);
         }
-        
-    };
-    
+    }
 }
 
 
