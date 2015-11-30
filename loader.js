@@ -12,7 +12,6 @@
  * @class Loader
  * @classdesc Class that loads and unloads dependencies in an application.
  * @requires AWAF/ajax
- * @requires AWAF/eventmanager
  * @requires caolan/async
  * @requires pieroxy/lz-string
  */
@@ -59,6 +58,7 @@ export class Loader{
 
     /**
      * Loads a file (JS/CSS/HTML).
+     * @since 0.0.1
      * @param   {string}   url      URL of file.
      * @param   {function} callback Function returned with a number value (status).
      */
@@ -132,6 +132,7 @@ export class Loader{
 
     /**
      * Unloads a file (CSS/HTML).
+     * @since 0.0.1
      * @param   {string}   url      URL of file.
      * @param   {function} callback Function returned with a status value.
      */

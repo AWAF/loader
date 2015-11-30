@@ -35,6 +35,7 @@ Checks if a web application file (js/css/html) is already loaded.
 Loads a file (JS/CSS/HTML).
 
 **Kind**: instance method of <code>[Loader](#Loader)</code>  
+**Since**: 0.0.1  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -49,6 +50,7 @@ Loads a file (JS/CSS/HTML).
 Unloads a file (CSS/HTML).
 
 **Kind**: instance method of <code>[Loader](#Loader)</code>  
+**Since**: 0.0.1  
 
 | Param | Type | Description |
 | --- | --- | --- |
